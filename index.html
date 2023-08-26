@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Single Page with Sidebar Navigation</title>
+    <!-- Include MDBootstrap CSS and JS -->
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
+    <!-- MDB -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.1/mdb.min.css" rel="stylesheet" />
+    <!-- BX Icon -->
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <style>
+        @font-face {
+            font-family: "Kingsman";
+            src: url(./assets/KingsmanDemo-1GVgg.ttf);
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .sidebar {
+            height: 100%;
+            width: 20%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: #333;
+            padding-top: 20px;
+            color: rgba(255, 255, 255, .6);
+            transform: translateX(-100%);
+            transition: transform 0.4s ease-in-out;
+            z-index: 9999;
+        }
+
+        /* Styles for the open state of the sidebar */
+        .sidebar.open {
+            transform: translateX(0);
+        }
+        
+        .sidebar .nav-link {
+            padding: 15px 25px;
+            text-decoration: none;
+            font-size: 18px;
+            display: block;
+        }
+
+        .sidebar .nav-link:hover {
+            color: #3B71CA;
+        }
+
+        .sidebar .nav-link.active {
+            color: #3B71CA;
+        }
+
+        .profile {
+            text-align: center;
+        }
+
+        .profile img {
+            border-radius: 50%;
+            border: 5px solid grey;
+        }
+        
+        .content {
+            margin-left: 20%;
+            padding: 20px;
+        }
+        /* Add some styling to sections */
+        #certificate, #story {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: start;
+            align-items: start;
+        }
+
+        /* Add some styling to sections */
+        #home, #contact {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 36px;
+        }
+
+        p {
+            font-size: 18px;
+        }
+
+        .my-name {
+            font-family: "Kingsman";
+            font-size: 72px;
+            text-align: center;
+        }
+
+        /* Add this CSS to your existing styles or in a separate stylesheet */
+
+        .hamburger-button {
+            position: fixed;
+            top: 10px;
+            right: 15px;
+            z-index: 999; /* Ensure it's above the sidebar */
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            display: none;
+        }
+        .prog-logo {
+            max-width: 100%;
+            height: auto;
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 80%;
+            }
+            .hamburger-button {
+                display: block;
+            }
+            .content {
+                margin-left: 0;
+                padding: 20px;
+            }
+
+            /* You can adjust font sizes and other styles for smaller screens here */
+            h1 {
+                font-size: 24px;
+            }
+
+            p {
+                font-size: 16px;
+            }
+
+            .icon-links {
+                display: flex;
+                align-items: center;
+                gap: 100px; /* Adjust the gap as needed */
+                margin-top: -13px;
+            }
+
+            .prog-logo {
+                width: 100px;
+                height: auto;
+            }
+        }
+
+        /* Styles sa form/ contact us */
+        .form-container {
+            padding: 20px;
+            background-color: #fff;
+            border: 2px solid black;
+            border-radius: 1px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            position: absolute;
+            margin-bottom: 5px;
+            transform-origin: left bottom;
+            transform: translateY(-30px);
+            transition: transform 0.3s ease-in-out, font-size 0.3s ease-in-out;
+        }
+
+        .form-group input:focus+label,
+        .form-group textarea:focus+label,
+        .form-group input:valid+label,
+        .form-group textarea:valid+label {
+            transform: translateY(-45px);
+            font-size: 12px;
+            color: black;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 5px;
+            border: 0;
+            outline: none;
+            background: transparent;
+            border-bottom: 2px solid #ccc;
+            font-size: 16px;
+            transition: 0.1s ease-in;
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-bottom: 2px solid #161616;
+        }
+
+        .icon-links {
+            display: flex;
+            align-items: center;
+            gap: 10px; /* Adjust the gap as needed */
+            margin-top: -13px;
+        }
+        
+        /* Styles for the decagon container */
+        .prog-container {
+            display: flex;
+            align-items: center;
+            justify-content: start;
+            padding: 5px 20px;
+        }
+
+        .decagon {
+            width: 80px;
+            /* Adjust the size as needed */
+            height: 80px;
+            /* Adjust the size as needed */
+            background-color: #333;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+        }
+
+        /* Styles for the Font Awesome icon */
+        .decagon i {
+            font-size: 3.5rem;
+            /* Adjust the icon size as needed */
+            color: white;
+            /* Icon color */
+        }
+
+        .prog-text {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .prog-container h4 {
+            margin: 0;
+            margin-left: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar open">
+        <div class="profile">
+            <img src="./assets/profile_1.jpg" alt="" width="120" height="120">
+            <h5 class="mt-2">Jake Anthony Lanon</h5>
+            <div>
+                <a href="https://github.com/madNinja-Jeyk" target="_blank" class="d-inline-block text-white p-1"><i class='bx bxl-github bx-md bx-tada-hover'></i> </a>
+                <a href="https://www.facebook.com/jakeanthony.lanon.9" target="_blank" class="d-inline-block text-white p-1"><i class='bx bxl-facebook-circle bx-md bx-tada-hover'></i> </a>
+                <a href="https:/m.me/jakeanthony.lanon.9" target="_blank" class="d-inline-block text-white p-1"><i class='bx bxl-messenger bx-md bx-tada-hover'></i> </a>
+                <a href="#" class="d-inline-block text-white p-1"><i class='bx bxl-instagram bx-md bx-tada-hover'></i> </a>
+            </div>
+        </div>
+
+        <a href="#home" class="nav-link active">
+            <i class='bx bx-home bx-sm' style="vertical-align: middle;"></i>
+            <span style="vertical-align: middle;">Home</span>
+        </a>
+        <a href="#story" class="nav-link">
+            <i class='bx bx-file-blank bx-sm' style="vertical-align: middle;"></i>
+            <span style="vertical-align: middle;">Story</span>
+        </a>
+        <a class="nav-link" href="#certificate">
+            <i class='bx bx-certification bx-sm' style="vertical-align: middle;"></i>
+            <span style="vertical-align: middle;">Certificate</span>
+        </a>
+        <a class="nav-link" href="#contact">
+            <i class='bx bx-phone bx-sm' style="vertical-align: middle;"></i>
+            <span style="vertical-align: middle;">Contact</span>
+        </a>
+    </div>
+    
+    <i class='bx bx-menu bx-md hamburger-button' id="toggleSidebarButton"></i>
+    <div class="content">
+        <section id="home">
+            <h1 style="font-family: 'Courier New', Courier, monospace;">Hi I am</h1>
+            <h1 class="my-name">Jake Anthony Lanon</h1>
+            <div style="max-width: 700px; text-align: justify; text-justify: inter-word;">
+                <p>I am 18 years old and will be starting my freshman year on August 29th. Hindi ako magaling sa <span class="text-danger"><del>FRONTEND</del></span> pero kung usapang
+                     <span class="text-success">BACKEND</span>, maupo ka na lang d'yan kasi ipagtitimpla muna kita ng kape. <a href="#story">Read More...</a></p> 
+            </div>
+            
+        </section>
+        <section id="story">
+            <h1 class="pt-3">About Me</h1>
+            <div style="max-width: 700px; text-align: justify; text-justify: inter-word;">
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Velit temporibus dignissimos quo excepturi reprehenderit, et soluta voluptatem! Deserunt nulla et obcaecati temporibus officiis atque cumque eaque, voluptas doloribus sit totam?</p>
+            </div>
+            <h1 class="pt-3">Technical Skills</h1>
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-12">
+                    <div class="prog-container">
+                        <div class="decagon">
+                            <i class="bx bxl-python bx-tada-hover bx-icon"></i>
+                        </div>
+                        <div class="prog-text">
+                            <h4>Python - 80%</h4>
+                        </div>
+                    </div>
+                    <div class="prog-container">
+                        <div class="decagon">
+                            <i class="bx bxl-html5 bx-tada-hover bx-icon"></i>
+                        </div>
+                        <div class="prog-text">
+                            <h4>HTML - 85%</h4>
+                        </div>
+                    </div>
+                    <div class="prog-container">
+                        <div class="decagon">
+                            <i class="bx bxl-css3 bx-tada-hover bx-icon"></i>
+                        </div>
+                        <div class="prog-text">
+                            <h4>CSS - 50%</h4>
+                        </div>
+                    </div>
+                    <div class="prog-container">
+                        <div class="decagon">
+                            <i class="bx bxl-javascript bx-tada-hover bx-icon"></i>
+                        </div>
+                        <div class="prog-text">
+                            <h4>JavaScript - 80%</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-12">
+                    <div class="prog-container">
+                        <div class="decagon">
+                            <i class="bx bxl-django bx-tada-hover bx-icon"></i>
+                        </div>
+                        <div class="prog-text">
+                            <h4>Django - 85%</h4>
+                        </div>
+                    </div>
+                    <div class="prog-container">
+                        <div class="decagon">
+                            <i class="bx bxl-flask bx-tada-hover bx-icon"></i>
+                        </div>
+                        <div class="prog-text">
+                            <h4>Flask - 75%</h4>
+                        </div>
+                    </div>
+                    <div class="prog-container">
+                        <div class="decagon">
+                            <i class="bx bxl-bootstrap bx-tada-hover bx-icon"></i>
+                        </div>
+                        <div class="prog-text">
+                            <h4>Bootstrap - 90%</h4>
+                        </div>
+                    </div>
+                    <div class="prog-container">
+                        <div class="decagon">
+                            <i class="bx bxl-vuejs bx-tada-hover bx-icon"></i>
+                        </div>
+                        <div class="prog-text">
+                            <h4>VueJS (Quasar)- 70%</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- <div class="row justify-content-center">
+                <div class="col-md-3 col-sm-6" style="border: 1px solid blue;">
+                    <img src="./assets/python.png" alt="" class="prog-logo">
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <img src="./assets/js.png" alt="" class="prog-logo">
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <img src="./assets/html.png" alt="" class="prog-logo">
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <img src="./assets/css.png" alt="" class="prog-logo">
+                </div>
+            </div> -->
+        </section>
+        <section id="certificate">
+            <h1 class="pt-3 mb-3">Certificate</h1>
+            <div class="card col-md-5 col-lg-4 col-sm-12 mb-4" style="z-index: -99;">
+                <img src="./assets/html_cert.png" class="card-img-top" alt="HTML Certificate" >
+                <div class="card-body">
+                    <p class="card-title"><a class="text-black" href="https://www.codecademy.com/learn/learn-html">Learn HTML Course (Codecademy)</a></p>
+                </div>
+            </div>
+        </section>
+
+
+        <section id="contact" style="justify-content: start;">
+            <div class="form-container col-sm-12 col-md-5 col-lg-4 mt-5">
+                <h2 class="text-center">Contact Us</h2>
+                <form>
+                    <div class="form-group">
+                        <input type="text" id="name" name="name" required autocomplete="off">
+                        <label for="name">Name</label>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="email" name="email" required autocomplete="off">
+                        <label for="email">Email</label>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="message" name="message" required autocomplete="off">
+                        <label for="message">Message</label>
+                    </div>
+                    <div class="col-12 justify-content-between align-items-center d-flex" >
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-dark">Contact Us</button>
+                        </div>
+                        <div style="width: 20px;"></div>
+                        <div class="icon-links">
+                            <a href="https:/m.me/jakeanthony.lanon.9" target="_blank" class="d-inline-block text-black">
+                                <i class='bx bxl-messenger bx-md bx-tada-hover'></i>
+                            </a>
+                            <a href="mailto:newjakelanon01@gmail.com" target="_blank" class="d-inline-block text-black">
+                                <i class='bx bxl-gmail bx-md bx-tada-hover'></i>
+                            </a>
+                            <a href="https://wa.me/639637140409" target="_blank" class="d-inline-block text-black">
+                                <i class='bx bxl-whatsapp bx-md bx-tada-hover'></i>
+                            </a>
+                            
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // JavaScript to add smooth scroll effect and close sidebar when link is clicked
+        const sections = document.querySelectorAll("section");
+        const navLinks = document.querySelectorAll(".sidebar a");
+        const toggleSidebarButton = document.getElementById("toggleSidebarButton");
+        const sidebar = document.querySelector(".sidebar");
+
+        const isMobile = () => {
+            if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                // Code to execute if the device is a mobile device
+                console.log("This is a mobile device.");
+                return true;
+            }
+            // Code to execute if the device is a desktop device
+            console.log("This is a desktop device.");
+            return false;
+        }
+        
+        if(isMobile()) {
+            sidebar.classList.remove("open");
+        }
+        navLinks.forEach((link) => {
+            link.addEventListener("click", () => {
+                const targetId = link.getAttribute("href").substring(1);
+                const targetSection = document.getElementById(targetId);
+                if(isMobile()) {
+                    sidebar.classList.remove("open");
+                }
+                // Scroll to the target section with a smooth effect
+                window.scrollTo({
+                    top: targetSection.offsetTop,
+                    behavior: "smooth"
+                });
+            });
+        });
+
+        // JavaScript to add active class to the current section's link
+        window.addEventListener("scroll", () => {
+            let current = "";
+            sections.forEach((section) => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (pageYOffset >= sectionTop - sectionHeight / 3) {
+                    current = section.getAttribute("id");
+                }
+            });
+
+            navLinks.forEach((link) => {
+                link.classList.remove("active");
+                if (link.getAttribute("href").substring(1) === current) {
+                    link.classList.add("active");
+                }
+            });
+        });
+
+        // Hamburger Button
+
+        toggleSidebarButton.addEventListener("click", () => {
+            sidebar.classList.toggle("open"); 
+        });
+
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.min.js"
+        integrity="sha384-Rx+T1VzGupg4BHQYs2gCW9It+akI2MM/mndMCy36UVfodzcJcF0GGLxZIzObiEfa"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
